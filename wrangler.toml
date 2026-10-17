@@ -17,21 +17,28 @@ compatibility_date = "2025-01-01"
 keep_vars = true
 
 # =========================================================
-# D1 数据库：账号 / 收藏 / 歌单（必须，否则顶栏不出现「登录」且收藏不可用）
+# D1 数据库：账号 / 收藏 / 歌单（绑定后顶栏才出现「登录」、收藏才可用）
 # ------------------------------------------------------------
-# 首次使用按顺序做一次：
+# 注意：这段默认是「注释掉」的，目的是让仓库在没建 D1 时也能直接 deploy
+#       （此时账号/收藏接口回 503，前端自动隐藏入口，搜索/播放不受影响）。
+#
+# 启用方式（二选一）：
+# 【A. 不改本文件，最省事】Cloudflare Dashboard：
+#     Workers & Pages → D1 SQL Database → Create（库名 music-db），
+#     再到 你的 Worker → Settings → Bindings → Add → D1 Database，
+#     绑定名(Variable name) 必须填 DB，选刚建的库，保存即可。
+#
+# 【B. 用 wrangler.toml】按顺序：
 #   1) npx wrangler d1 create music-db
-#   2) 把下面这行 database_id 替换成命令输出里的 database_id（一长串 UUID）
+#   2) 去掉下面 4 行开头的 #，把 database_id 改成命令输出的真实 id（一长串 UUID）
 #   3) npx wrangler d1 execute music-db --remote --file=./schema.sql
-#      （也可以省略这步：Worker 首次启动会自动 CREATE TABLE IF NOT EXISTS）
+#      （可省略：Worker 首次启动会自动 CREATE TABLE IF NOT EXISTS）
 #   4) npx wrangler deploy
-# 用 Dashboard 部署：Workers & Pages → D1 SQL Database → Create，
-#   再在 Worker → Settings → Bindings 里把 D1 绑定名设为 DB。
 # =========================================================
-[[d1_databases]]
-binding = "DB"
-database_name = "music-db"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "music-db"
+# database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
 
 # 可选：绑定自定义域名（把 music.107211.xyz 解析到本 Worker）
 # routes = [

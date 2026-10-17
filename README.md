@@ -49,14 +49,16 @@ npx wrangler deploy
 ```bash
 # 1. 创建 D1 数据库（免费额度足够个人使用）
 npx wrangler d1 create music-db
-# 命令会输出一个 database_id（一长串 UUID），把它填进 wrangler.toml 的 database_id
-# 2. 初始化表结构（也可跳过：Worker 第一次收到请求时会自动 CREATE TABLE IF NOT EXISTS）
+#    命令会输出一个 database_id（一长串 UUID）。
+# 2. 打开 wrangler.toml，找到文末被注释掉的 [[d1_databases]] 四行，去掉注释，
+#    把 database_id 改成上一步的真实 id。
+# 3. 初始化表结构（可跳过：Worker 第一次收到请求时会自动 CREATE TABLE IF NOT EXISTS）
 npx wrangler d1 execute music-db --remote --file=./schema.sql
-# 3. 重新部署
+# 4. 重新部署
 npx wrangler deploy
 ```
 
-> `wrangler.toml` 里 `database_id` 当前是占位符 `REPLACE_WITH_YOUR_D1_DATABASE_ID`，**必须替换成上一步的真实 ID 才能部署成功**。
+> 为保证「没建 D1 也能直接部署」，`wrangler.toml` 里的 `[[d1_databases]]` 绑定**默认是注释掉的**；不启用也能正常部署，只是账号/收藏功能自动隐藏。**不想改文件就用上面的 Dashboard 方式直接绑定（绑定名 `DB`）。**
 
 **Dashboard 方式（含 Git 导入）：**
 
