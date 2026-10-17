@@ -48,7 +48,7 @@ var UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, l
 var CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
   "Access-Control-Max-Age": "86400"
 };
 /* =========================================================
@@ -67,8 +67,10 @@ function flagOn(v) {
   return v === "true" || v === "1" || v === "yes" || v === "on";
 }
 function oauthOn(env) { return flagOn(env ? env.OAUTH_ON : ""); }
+/* 账号 / 收藏功能是否可用：取决于是否绑定了 D1 数据库（binding 名 DB）。 */
+function accountOn(env) { return !!(env && env.DB); }
 async function handleConfig(env) {
-  return json({ oauth: oauthOn(env) }, 200, { "cache-control": "no-store" });
+  return json({ oauth: oauthOn(env), account: accountOn(env) }, 200, { "cache-control": "no-store" });
 }
 var json = ((obj, status = 200, extra = null) => new Response(JSON.stringify(obj), {
   status,
@@ -593,6 +595,230 @@ async function handleHealth(env) {
   });
 }
 
+/* =========================================================
+   账号 / 收藏：Cloudflare D1（binding 名 DB）
+   ------------------------------------------------------------
+   账号密码注册 / 登录（PBKDF2-SHA256 加盐哈希），会话 token；
+   云端歌单（注册即建默认「我的收藏」）与歌曲收藏全部跟随账号存进 D1，
+   换设备、换浏览器登录同一个账号，歌单一模一样。
+   未绑定 D1 时这些接口统一回 503，不影响搜索 / 播放。
+   ========================================================= */
+var SESSION_TTL = 30 * 24 * 3600 * 1000;
+var dbReady = null;
+function dbOf(env) { return env && env.DB ? env.DB : null; }
+function dbMissing() {
+  return json({ error: "账号/收藏未启用：请先在 Cloudflare 给本 Worker 绑定 D1 数据库（binding 名 DB）" }, 503);
+}
+async function ensureSchema(env) {
+  const db = dbOf(env);
+  if (!db) return false;
+  if (dbReady) return dbReady;
+  dbReady = (async () => {
+    const stmts = [
+      "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL, pass_salt TEXT NOT NULL, pass_hash TEXT NOT NULL, created_at INTEGER NOT NULL)",
+      "CREATE TABLE IF NOT EXISTS sessions (token TEXT PRIMARY KEY, user_id INTEGER NOT NULL, created_at INTEGER NOT NULL, expires_at INTEGER NOT NULL)",
+      "CREATE TABLE IF NOT EXISTS playlists (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, name TEXT NOT NULL, is_default INTEGER NOT NULL DEFAULT 0, created_at INTEGER NOT NULL)",
+      "CREATE TABLE IF NOT EXISTS playlist_songs (id INTEGER PRIMARY KEY AUTOINCREMENT, playlist_id INTEGER NOT NULL, server TEXT NOT NULL, song_id TEXT NOT NULL, title TEXT, artist TEXT, pic TEXT, added_at INTEGER NOT NULL, UNIQUE(playlist_id, server, song_id))",
+      "CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id)",
+      "CREATE INDEX IF NOT EXISTS idx_playlists_user ON playlists(user_id)",
+      "CREATE INDEX IF NOT EXISTS idx_songs_pl ON playlist_songs(playlist_id)",
+      "CREATE INDEX IF NOT EXISTS idx_songs_song ON playlist_songs(server, song_id)"
+    ];
+    for (let i = 0; i < stmts.length; i++) await db.exec(stmts[i]);
+  })().catch((e) => { dbReady = null; throw e; });
+  return dbReady.then(() => true);
+}
+function bufToHex(buf) {
+  return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+function hexToBytes(hex) {
+  const out = new Uint8Array(Math.floor(hex.length / 2));
+  for (let i = 0; i < out.length; i++) out[i] = parseInt(hex.substr(i * 2, 2), 16);
+  return out;
+}
+function randHex(n) {
+  const b = new Uint8Array(n);
+  crypto.getRandomValues(b);
+  return bufToHex(b);
+}
+async function hashPassword(password, saltHex) {
+  const enc = new TextEncoder();
+  const material = await crypto.subtle.importKey("raw", enc.encode(password), { name: "PBKDF2", hash: "SHA-256" }, false, ["deriveBits"]);
+  const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", salt: hexToBytes(saltHex), iterations: 100000, hash: "SHA-256" }, material, 256);
+  return bufToHex(bits);
+}
+function validUsername(u) {
+  u = String(u == null ? "" : u).trim();
+  return (u.length >= 2 && u.length <= 20 && /^[\\u4e00-\\u9fa5A-Za-z0-9_]+$/.test(u)) ? u : "";
+}
+function validPassword(p) {
+  p = String(p == null ? "" : p);
+  return (p.length >= 6 && p.length <= 32) ? p : "";
+}
+async function readJson(request) {
+  try {
+    const j = await request.json();
+    return j && typeof j === "object" ? j : {};
+  } catch (e) { return {}; }
+}
+async function createSession(db, userId) {
+  const token = randHex(32);
+  const now = Date.now();
+  await db.prepare("INSERT INTO sessions (token, user_id, created_at, expires_at) VALUES (?, ?, ?, ?)").bind(token, userId, now, now + SESSION_TTL).run();
+  return token;
+}
+async function authUser(env, request) {
+  const db = dbOf(env);
+  if (!db) return null;
+  const h = request.headers.get("authorization") || "";
+  const m = h.match(/^Bearer\\s+([0-9a-f]{16,})$/i);
+  if (!m) return null;
+  const token = m[1];
+  const row = await db.prepare("SELECT s.expires_at, u.id AS uid, u.username FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token = ?").bind(token).first();
+  if (!row) return null;
+  if (!row.expires_at || row.expires_at < Date.now()) {
+    try { await db.prepare("DELETE FROM sessions WHERE token = ?").bind(token).run(); } catch (e) {}
+    return null;
+  }
+  return { token: token, uid: row.uid, username: row.username };
+}
+async function handleRegister(env, request) {
+  const db = dbOf(env);
+  if (!db) return dbMissing();
+  await ensureSchema(env);
+  const body = await readJson(request);
+  const username = validUsername(body.username);
+  const password = validPassword(body.password);
+  if (!username) return json({ error: "用户名需 2-20 位（字母/数字/下划线/中文）" }, 400);
+  if (!password) return json({ error: "密码需 6-32 位" }, 400);
+  const dup = await db.prepare("SELECT id FROM users WHERE username = ?").bind(username).first();
+  if (dup) return json({ error: "该用户名已被注册" }, 409);
+  const salt = randHex(16);
+  const hash = await hashPassword(password, salt);
+  const now = Date.now();
+  const info = await db.prepare("INSERT INTO users (username, pass_salt, pass_hash, created_at) VALUES (?, ?, ?, ?)").bind(username, salt, hash, now).run();
+  const uid = info && info.meta ? info.meta.last_row_id : null;
+  await db.prepare("INSERT INTO playlists (user_id, name, is_default, created_at) VALUES (?, ?, 1, ?)").bind(uid, "我的收藏", now).run();
+  const token = await createSession(db, uid);
+  return json({ token: token, username: username });
+}
+async function handleLogin(env, request) {
+  const db = dbOf(env);
+  if (!db) return dbMissing();
+  await ensureSchema(env);
+  const body = await readJson(request);
+  const username = String(body.username == null ? "" : body.username).trim();
+  const password = String(body.password == null ? "" : body.password);
+  if (!username || !password) return json({ error: "请输入用户名和密码" }, 400);
+  const user = await db.prepare("SELECT id, username, pass_salt, pass_hash FROM users WHERE username = ?").bind(username).first();
+  if (!user) return json({ error: "用户名或密码错误" }, 401);
+  const hash = await hashPassword(password, user.pass_salt);
+  if (hash !== user.pass_hash) return json({ error: "用户名或密码错误" }, 401);
+  const token = await createSession(db, user.id);
+  return json({ token: token, username: user.username });
+}
+async function handleLogout(env, request) {
+  const db = dbOf(env);
+  const a = await authUser(env, request);
+  if (a && db) { try { await db.prepare("DELETE FROM sessions WHERE token = ?").bind(a.token).run(); } catch (e) {} }
+  return json({ ok: true });
+}
+async function handleMe(env, request) {
+  const db = dbOf(env);
+  if (!db) return dbMissing();
+  await ensureSchema(env);
+  const a = await authUser(env, request);
+  if (!a) return json({ error: "未登录" }, 401);
+  return json({ username: a.username });
+}
+async function ownedPlaylist(db, uid, pid) {
+  pid = parseInt(pid, 10);
+  if (!pid) return null;
+  return await db.prepare("SELECT id, name, is_default FROM playlists WHERE id = ? AND user_id = ?").bind(pid, uid).first();
+}
+async function handlePlaylistsGet(env, request) {
+  const db = dbOf(env);
+  if (!db) return dbMissing();
+  await ensureSchema(env);
+  const a = await authUser(env, request);
+  if (!a) return json({ error: "未登录" }, 401);
+  const pls = await db.prepare("SELECT id, name, is_default, created_at FROM playlists WHERE user_id = ? ORDER BY is_default DESC, id ASC").bind(a.uid).all();
+  const songs = await db.prepare("SELECT playlist_id, server, song_id, title, artist, pic, added_at FROM playlist_songs WHERE playlist_id IN (SELECT id FROM playlists WHERE user_id = ?) ORDER BY added_at DESC").bind(a.uid).all();
+  const byPl = {};
+  (songs.results || []).forEach((s) => {
+    const k = String(s.playlist_id);
+    if (!byPl[k]) byPl[k] = [];
+    byPl[k].push({ server: s.server, id: s.song_id, title: s.title || "", author: s.artist || "", pic: s.pic || "", at: s.added_at });
+  });
+  const out = (pls.results || []).map((p) => ({
+    id: p.id,
+    name: p.name,
+    isDefault: !!p.is_default,
+    count: (byPl[String(p.id)] || []).length,
+    songs: byPl[String(p.id)] || []
+  }));
+  return json({ username: a.username, playlists: out });
+}
+async function handlePlaylistCreate(env, request) {
+  const db = dbOf(env);
+  if (!db) return dbMissing();
+  await ensureSchema(env);
+  const a = await authUser(env, request);
+  if (!a) return json({ error: "未登录" }, 401);
+  const body = await readJson(request);
+  let name = String(body.name == null ? "" : body.name).trim().slice(0, 30);
+  if (!name) name = "新歌单 " + Date.now();
+  const dup = await db.prepare("SELECT id FROM playlists WHERE user_id = ? AND name = ?").bind(a.uid, name).first();
+  if (dup) return json({ error: "已有同名歌单" }, 409);
+  const info = await db.prepare("INSERT INTO playlists (user_id, name, is_default, created_at) VALUES (?, ?, 0, ?)").bind(a.uid, name, Date.now()).run();
+  return json({ id: info && info.meta ? info.meta.last_row_id : null, name: name });
+}
+async function handlePlaylistDelete(env, request) {
+  const db = dbOf(env);
+  if (!db) return dbMissing();
+  await ensureSchema(env);
+  const a = await authUser(env, request);
+  if (!a) return json({ error: "未登录" }, 401);
+  const body = await readJson(request);
+  const p = await ownedPlaylist(db, a.uid, body.id);
+  if (!p) return json({ error: "歌单不存在" }, 404);
+  if (p.is_default) return json({ error: "默认收藏歌单不可删除" }, 400);
+  await db.prepare("DELETE FROM playlist_songs WHERE playlist_id = ?").bind(p.id).run();
+  await db.prepare("DELETE FROM playlists WHERE id = ? AND user_id = ?").bind(p.id, a.uid).run();
+  return json({ ok: true });
+}
+async function handleSongAdd(env, request) {
+  const db = dbOf(env);
+  if (!db) return dbMissing();
+  await ensureSchema(env);
+  const a = await authUser(env, request);
+  if (!a) return json({ error: "未登录" }, 401);
+  const body = await readJson(request);
+  const p = await ownedPlaylist(db, a.uid, body.playlistId);
+  if (!p) return json({ error: "歌单不存在" }, 404);
+  const server = String(body.server || "netease").slice(0, 20);
+  const sid = String(body.id == null ? "" : body.id).trim();
+  if (!sid) return json({ error: "缺少歌曲 id" }, 400);
+  await db.prepare("INSERT OR IGNORE INTO playlist_songs (playlist_id, server, song_id, title, artist, pic, added_at) VALUES (?, ?, ?, ?, ?, ?, ?)").bind(p.id, server, sid, String(body.title || "").slice(0, 200), String(body.artist || "").slice(0, 200), String(body.pic || "").slice(0, 500), Date.now()).run();
+  const cnt = await db.prepare("SELECT COUNT(*) AS n FROM playlist_songs WHERE playlist_id = ?").bind(p.id).first();
+  return json({ ok: true, playlistId: p.id, count: cnt ? cnt.n : 0 });
+}
+async function handleSongRemove(env, request) {
+  const db = dbOf(env);
+  if (!db) return dbMissing();
+  await ensureSchema(env);
+  const a = await authUser(env, request);
+  if (!a) return json({ error: "未登录" }, 401);
+  const body = await readJson(request);
+  const p = await ownedPlaylist(db, a.uid, body.playlistId);
+  if (!p) return json({ error: "歌单不存在" }, 404);
+  const server = String(body.server || "netease").slice(0, 20);
+  const sid = String(body.id == null ? "" : body.id).trim();
+  await db.prepare("DELETE FROM playlist_songs WHERE playlist_id = ? AND server = ? AND song_id = ?").bind(p.id, server, sid).run();
+  const cnt = await db.prepare("SELECT COUNT(*) AS n FROM playlist_songs WHERE playlist_id = ?").bind(p.id).first();
+  return json({ ok: true, playlistId: p.id, count: cnt ? cnt.n : 0 });
+}
+
 var worker_default = {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -600,6 +826,15 @@ var worker_default = {
       return new Response(null, { status: 204, headers: CORS });
     }
     const p = url.pathname;
+    /* 账号 / 收藏接口（必须排在 /api 通配之前） */
+    if (p === "/auth/register" && request.method === "POST") return handleRegister(env, request);
+    if (p === "/auth/login" && request.method === "POST") return handleLogin(env, request);
+    if (p === "/auth/logout" && request.method === "POST") return handleLogout(env, request);
+    if (p === "/auth/me" && request.method === "GET") return handleMe(env, request);
+    if (p === "/my/playlists") return request.method === "GET" ? handlePlaylistsGet(env, request) : handlePlaylistCreate(env, request);
+    if (p === "/my/playlists/delete" && request.method === "POST") return handlePlaylistDelete(env, request);
+    if (p === "/my/songs/add" && request.method === "POST") return handleSongAdd(env, request);
+    if (p === "/my/songs/remove" && request.method === "POST") return handleSongRemove(env, request);
     if (p === "/" || p === "/index.html") {
       // 回退：不再 gzip 压缩 HTML。
       // 曾用 CompressionStream 压缩并以 content-encoding:gzip 返回，但未检查

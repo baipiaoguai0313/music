@@ -1061,6 +1061,105 @@ main.wrap{padding-bottom:calc(var(--player-h) + 32px)}
 .srcpop .sp-b{height:40px;padding:0 18px;border-radius:var(--r-full);background:var(--primary-box);color:var(--acc2)}
 .srcpop .sp-b:hover{background:#c2dafb}
 
+/* ============ 账号 / 收藏（云端歌单） ============ */
+/* 歌曲行的收藏（爱心）按钮 */
+.songlist .fav{
+  margin-left:auto;flex:none;width:34px;height:34px;border-radius:var(--r-full);
+  display:flex;align-items:center;justify-content:center;color:var(--on-surface-3);
+  transition:background .15s,color .15s,transform .12s;
+}
+.songlist .fav:hover{background:rgba(11,87,208,.12);color:var(--primary)}
+.songlist .fav svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.songlist .fav.on{color:var(--primary)}
+.songlist .fav.on svg{fill:var(--primary);stroke:var(--primary)}
+.songlist .fav:active{transform:scale(.88)}
+
+/* 收藏面板顶部 */
+.fav-hd{display:flex;align-items:center;justify-content:flex-end;margin:0 0 10px}
+.fav-new{
+  height:36px;padding:0 16px;border:0;border-radius:var(--r-full);
+  background:var(--primary-box);color:var(--primary);font-size:13px;font-weight:500;
+  transition:background .15s;
+}
+.fav-new:hover{background:#c4d8fc}
+.fav-login{text-align:center;padding:22px 10px 10px}
+.fav-login p{font-size:13px;color:var(--on-surface-3);margin-bottom:14px}
+.fav-login .go{
+  height:40px;padding:0 28px;border:0;border-radius:var(--r-full);
+  background:var(--primary);color:var(--on-primary);font-size:14px;font-weight:500;
+}
+.fav-login .go:hover{background:var(--on-surface)}
+.fav-lists{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.favcard{position:relative;display:block;text-align:left;border-radius:var(--r-md);overflow:hidden;transition:background .15s;cursor:pointer}
+.favcard:hover{background:rgba(11,87,208,.08)}
+.favcard .fc-cov{position:relative;display:block;width:100%;aspect-ratio:1/1;border-radius:var(--r-sm);overflow:hidden;background:var(--surface-3);border:0;padding:0}
+.favcard .fc-cov img{width:100%;height:100%;object-fit:cover}
+.favcard .fc-cov .pl-n{position:absolute;right:6px;bottom:6px;padding:2px 8px;border-radius:var(--r-full);background:rgba(27,27,33,.72);color:#fff;font-size:11px;line-height:1.6}
+.favcard .fc-t{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:13.5px;color:var(--on-surface);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.favcard .fc-s{display:block;margin-top:1px;font-size:12px;color:var(--on-surface-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.favcard .fc-s:empty{display:none}
+.favcard .fc-badge{flex:none;font-size:10px;font-style:normal;color:var(--primary);background:var(--primary-box);border-radius:var(--r-full);padding:1px 7px}
+.favcard .fc-x{position:absolute;right:6px;top:6px;width:26px;height:26px;border-radius:var(--r-full);background:rgba(27,27,33,.62);color:#fff;opacity:0;transition:opacity .15s,background .15s;display:flex;align-items:center;justify-content:center}
+.favcard:hover .fc-x{opacity:1}
+.favcard .fc-x:hover{background:var(--bad)}
+.favcard .fc-x::before,.favcard .fc-x::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:1.6px;background:currentColor;border-radius:2px}
+.favcard .fc-x::before{transform:translate(-50%,-50%) rotate(45deg)}
+.favcard .fc-x::after{transform:translate(-50%,-50%) rotate(-45deg)}
+
+/* 账号弹窗：登录 / 注册 */
+.acct-panel{width:min(380px,100%)}
+.seg{display:flex;background:var(--surface-2);border-radius:var(--r-full);padding:3px;margin:6px 10px 12px}
+.seg .seg-b{flex:1;height:34px;border-radius:var(--r-full);font-size:13.5px;font-weight:500;color:var(--on-surface-2);transition:background .15s,color .15s}
+.seg .seg-b.on{background:var(--card);color:var(--primary);box-shadow:var(--e2)}
+.fld{display:block;margin:0 10px 12px}
+.fld input{
+  width:100%;height:44px;padding:0 14px;border:1px solid var(--outline-2);
+  border-radius:var(--r-sm);background:var(--surface);color:var(--on-surface);
+}
+.fld input:focus{outline:2px solid var(--primary);outline-offset:0;border-color:transparent}
+.acct-err{min-height:18px;margin:0 12px 4px;font-size:12px;color:var(--bad)}
+.acct-submit{
+  margin:2px 10px 12px;height:44px;border:0;border-radius:var(--r-full);
+  background:var(--primary);color:var(--on-primary);font-size:14.5px;font-weight:500;
+  transition:background .15s;
+}
+.acct-submit:hover{background:var(--on-surface)}
+.acct-submit[disabled]{background:var(--surface-3);color:var(--on-surface-3);cursor:default}
+.acct-logout{display:flex;align-items:center;gap:10px;padding:11px 12px;margin:8px 10px 12px;border-radius:var(--r-sm);background:var(--surface-2);color:var(--bad);font-size:13.5px;font-weight:500;justify-content:center}
+.acct-logout:hover{background:#f6dcd9}
+
+/* 收藏相关弹窗 */
+.fav-panel{width:min(400px,100%)}
+.fav-detail-panel{width:min(460px,100%);max-height:82vh;display:flex;flex-direction:column}
+.fav-detail-panel .pd{overflow-y:auto}
+.fav-detail-actions{margin-left:auto;display:flex;align-items:center;gap:6px}
+.fav-detail-actions .mini{height:30px;padding:0 12px;border:0;border-radius:var(--r-full);font-size:12.5px;background:var(--surface-2);color:var(--on-surface-2);font-weight:500}
+.fav-detail-actions .mini:hover{background:var(--surface-3)}
+.fav-detail-actions .mini.danger{color:var(--bad)}
+.fav-detail-actions .mini.danger:hover{background:#f6dcd9}
+.fav-song{display:flex;align-items:center;gap:10px;padding:8px 6px;border-radius:var(--r-sm);cursor:pointer}
+.fav-song:hover{background:rgba(11,87,208,.06)}
+.fav-song .fs-im{flex:none;width:38px;height:38px;border-radius:var(--r-xs);overflow:hidden;background:var(--surface-3)}
+.fav-song .fs-im img{width:100%;height:100%;object-fit:cover}
+.fav-song .fs-meta{flex:1;min-width:0}
+.fav-song .fs-t{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fav-song .fs-s{font-size:12px;color:var(--on-surface-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fav-song .fs-x{flex:none;width:26px;height:26px;border-radius:var(--r-full);color:var(--on-surface-3);display:flex;align-items:center;justify-content:center;position:relative}
+.fav-song .fs-x:hover{background:rgba(11,87,208,.12);color:var(--on-surface)}
+.fav-song .fs-x::before,.fav-song .fs-x::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:1.6px;background:currentColor;border-radius:2px}
+.fav-song .fs-x::before{transform:translate(-50%,-50%) rotate(45deg)}
+.fav-song .fs-x::after{transform:translate(-50%,-50%) rotate(-45deg)}
+.fav-empty{padding:26px 10px;text-align:center;color:var(--on-surface-3);font-size:13px}
+.sheet-hint{padding:2px 12px 8px;font-size:12px;color:var(--on-surface-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sheet-row{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:var(--r-sm);cursor:pointer}
+.sheet-row:hover{background:rgba(11,87,208,.08)}
+.sheet-row .sr-ic{flex:none;width:30px;height:30px;border-radius:var(--r-sm);background:var(--surface-2);display:flex;align-items:center;justify-content:center;color:var(--primary)}
+.sheet-row .sr-nm{flex:1;font-size:13.5px;min-width:0}
+.sheet-row .sr-nm small{display:block;color:var(--on-surface-3);font-size:11.5px}
+.sheet-row .sr-ck{flex:none;width:20px;height:20px;border-radius:var(--r-full);border:2px solid var(--line2);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;line-height:1}
+.sheet-row.added .sr-ck{background:var(--primary);border-color:var(--primary)}
+.sheet-row.sr-new{color:var(--primary);font-weight:500;justify-content:center}
+
 </style>
 
 </head>
@@ -1075,8 +1174,10 @@ main.wrap{padding-bottom:calc(var(--player-h) + 32px)}
     <button class="src-tag" id="srcTag" title="当前音源" aria-haspopup="true" aria-expanded="false">
       <span class="nm" id="srcCur">网易云</span><span class="ct" id="srcNum">·</span><i class="cv"></i>
     </button>
-    <!-- 登录入口默认藏起来：只有 Worker 侧 OAUTH_ON=true 时才显示（见 loadConfig） -->
-    <button class="btn" id="btnLogin" hidden>登录</button>
+    <!-- 账号密码登录（注册/收藏/云端歌单）：绑定 D1 后由 /config 控制显示 -->
+    <button class="btn" id="btnAccount" hidden>登录</button>
+    <!-- 第三方 OAuth 登录入口默认藏起来：只有 Worker 侧 OAUTH_ON=true 时才显示（见 loadConfig） -->
+    <button class="btn" id="btnLogin" hidden>OAuth</button>
   </div>
   <!-- 音源检测面板：逐个平台实测「搜得到 / 播得出」 -->
   <div class="srcpop" id="srcPop">
@@ -1118,17 +1219,31 @@ main.wrap{padding-bottom:calc(var(--player-h) + 32px)}
     <div class="res-hd">
       <h2>我的音乐</h2>
       <div class="mtabs" role="tablist">
-        <button class="tab on" id="tabHist" data-pane="paneHist" role="tab" aria-selected="true">收听记录</button>
-        <button class="tab" id="tabPls" data-pane="panePls" role="tab" aria-selected="false">我的歌单</button>
+        <button class="tab" id="tabFav" data-pane="paneFav" role="tab" aria-selected="false" hidden>我的收藏</button>
+        <button class="tab" id="tabHist" data-pane="paneHist" role="tab" aria-selected="false" hidden>收听记录</button>
+        <button class="tab on" id="tabPls" data-pane="panePls" role="tab" aria-selected="true">我的歌单</button>
       </div>
     </div>
 
-    <div class="mpane" id="paneHist" role="tabpanel">
+    <!-- 云端收藏：登录后出现，歌单跟随账号 -->
+    <div class="mpane" id="paneFav" role="tabpanel" hidden>
+      <div class="fav-hd">
+        <button class="fav-new" id="btnNewPl" type="button">＋ 新建歌单</button>
+      </div>
+      <div class="fav-lists" id="favLists"></div>
+      <p class="mempty" id="favEmpty" hidden></p>
+      <div class="fav-login" id="favLogin" hidden>
+        <p>登录账号后即可收藏歌曲，歌单会跟随账号在多设备同步</p>
+        <button class="go" id="btnFavLogin" type="button">登录 / 注册</button>
+      </div>
+    </div>
+
+    <div class="mpane" id="paneHist" role="tabpanel" hidden>
       <div class="mcards" id="histCards"></div>
       <p class="mempty" id="histEmpty"></p>
     </div>
 
-    <div class="mpane" id="panePls" role="tabpanel" hidden>
+    <div class="mpane" id="panePls" role="tabpanel">
       <form class="pladd" id="plForm" autocomplete="off">
         <input id="plId" enterkeyhint="done" aria-label="歌单链接或 ID">
         <button class="go" type="submit" id="btnPlAdd">导入</button>
@@ -1203,11 +1318,65 @@ main.wrap{padding-bottom:calc(var(--player-h) + 32px)}
   </div>
 </div>
 
-<!-- 登录 -->
+<!-- 第三方 OAuth 登录 -->
 <div class="mask" id="loginLayer">
   <div class="panel">
     <div class="ph"><b id="loginTitle">登录</b><button class="x" id="btnCloseLogin" aria-label="关闭"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <div class="pd" id="providerList"></div>
+  </div>
+</div>
+
+<!-- 账号密码 登录 / 注册 -->
+<div class="mask" id="acctLayer">
+  <div class="panel acct-panel">
+    <div class="ph"><b id="acctTitle">账号登录</b><button class="x" id="btnAcctClose" aria-label="关闭"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <!-- 表单视图 -->
+    <div class="pd" id="acctForm">
+      <div class="seg">
+        <button type="button" class="seg-b on" id="segLogin">登录</button>
+        <button type="button" class="seg-b" id="segReg">注册</button>
+      </div>
+      <label class="fld">用户名<input id="acctUser" autocomplete="username" placeholder="2-20 位字母 / 数字 / 中文"></label>
+      <label class="fld">密码<input id="acctPass" type="password" autocomplete="current-password" placeholder="6-32 位密码"></label>
+      <p class="acct-err" id="acctErr"></p>
+      <button class="acct-submit" id="btnAcctSubmit" type="button">登录</button>
+    </div>
+    <!-- 已登录视图 -->
+    <div class="pd" id="acctProfile" hidden>
+      <div class="profile">
+        <span class="av" id="acctAv">?</span>
+        <div><div class="nm" id="acctName"></div><div class="em">账号已登录</div></div>
+      </div>
+      <button class="acct-logout" id="btnAcctLogout" type="button">退出登录</button>
+    </div>
+  </div>
+</div>
+
+<!-- 收藏到歌单 -->
+<div class="mask" id="favSheet">
+  <div class="panel fav-panel">
+    <div class="ph"><b>收藏到歌单</b><button class="x" id="btnFavSheetClose" aria-label="关闭"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="pd">
+      <div class="sheet-hint" id="favSheetHint"></div>
+      <div id="favSheetBody"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 歌单详情 -->
+<div class="mask" id="favDetail">
+  <div class="panel fav-detail-panel">
+    <div class="ph">
+      <b id="favDetailTitle">歌单</b>
+      <div class="fav-detail-actions">
+        <button class="mini" id="btnFavPlayAll" type="button">播放全部</button>
+        <button class="mini danger" id="btnFavDel" type="button">删除歌单</button>
+        <button class="x" id="btnFavDetailClose" aria-label="关闭"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+    </div>
+    <div class="pd">
+      <div class="fav-songs" id="favSongs"></div>
+    </div>
   </div>
 </div>
 
@@ -1521,8 +1690,12 @@ function renderSonglist(ul, list) {
         '<span class="idx">' + (idx + 1) + '</span>' +
         '<span class="im"><img src="' + escAttr(it.pic) + '" loading="lazy" decoding="async" alt="">' +
         '<span class="eq"><i></i><i></i><i></i></span></span>' +
-        '<div class="meta"><div class="t">' + escText(it.title) + '</div><div class="s">' + escText(it.author) + '</div></div>';
+        '<div class="meta"><div class="t">' + escText(it.title) + '</div><div class="s">' + escText(it.author) + '</div></div>' +
+        '<button class="fav' + (favHasSong(it.server, it.id) ? " on" : "") + '" type="button" title="收藏到歌单" aria-label="收藏到歌单"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>';
       li.onclick = function () { playFromList(list, idx); };
+      (function (btn, song) {
+        btn.onclick = function (e) { e.stopPropagation(); favOpenSheet(song); };
+      })(li.querySelector(".fav"), it);
       imgFallback(li.querySelector("img"));
       ul.appendChild(li);
     })(list[i], i);
@@ -2593,7 +2766,11 @@ function dropPlaylist(id) {
 }
 
 /* ---------- 渲染 ---------- */
-function mineCount() { return HIST.length + PLS.length; }
+function mineCount() {
+  var n = HIST.length + PLS.length;
+  if (acctLoggedIn()) n += CLOUD.playlists.length;
+  return n;
+}
 function renderMine() {
   var sec = $("mineCard");
   if (!sec) return;
@@ -2672,7 +2849,10 @@ function renderMine() {
   }
   $("plEmpty").hidden = PLS.length > 0;
 
-  sec.hidden = mineCount() === 0;
+  /* 云端收藏（跟随账号）：登录后渲染，未登录给登录引导 */
+  favRender();
+
+  sec.hidden = mineCount() === 0 && !acctLoggedIn();
 }
 /* 记录条目还原成能播的形状；au 丢了就只剩 id，播放时会重新解析 */
 function histList() {
@@ -2684,7 +2864,8 @@ function histList() {
   return out;
 }
 function switchTab(name) {
-  /* OAuth 关着时收听记录那个标签根本不存在，落到它上面就改显示歌单 */
+  /* 对应功能没开 / 没登录时该标签不存在，落上去就改落到可用的标签 */
+  if (name === "paneFav" && !acctLoggedIn()) name = "panePls";
   if (name === "paneHist" && !CFG.oauth) name = "panePls";
   var tabs = $("mineCard").querySelectorAll(".tab");
   for (var i = 0; i < tabs.length; i++) {
@@ -2692,6 +2873,7 @@ function switchTab(name) {
     tabs[i].classList.toggle("on", on);
     tabs[i].setAttribute("aria-selected", on ? "true" : "false");
   }
+  $("paneFav").hidden = name !== "paneFav";
   $("paneHist").hidden = name !== "paneHist";
   $("panePls").hidden = name !== "panePls";
 }
@@ -2846,18 +3028,22 @@ function loadProviders() {
    整套账号功能（登录 / 续播进度 / 收听记录）都由 Worker 侧的 OAUTH_ON 开关控制，
    默认关：没配这个变量就一点都不出现，开关写在 wrangler.toml 的 [vars] 或 Dashboard。
    页面自己不问「要不要显示」，而是启动时向 Worker 要一次 /config 结论。 */
-var CFG = { oauth: false, loaded: false };
-/* 问 Worker 要一次「这个站到底开没开 OAuth」。只有 Worker 明确回 {oauth:true}
-   才开；未配置、配成 off/false/空、以及整个请求失败（本地直接开 index.html
-   时同源没有 /config），都按关闭处理 —— 拿不到结论就当没开，不猜。 */
+var CFG = { oauth: false, account: false, loaded: false };
+/* 问 Worker 要一次「这个站开没开 OAuth / 有没有账号库」。只有 Worker 明确回
+   {oauth:true} / {account:true} 才开；未配置、配成 off、以及整个请求失败
+   （本地直接开 index.html 时同源没有 /config），都按关闭处理 —— 拿不到结论就当没开，不猜。 */
 function loadConfig() {
   return fetchUrl("/config", 3000).then(function (r) { return r.json(); }).then(function (j) {
     CFG.oauth = !!(j && j.oauth);
+    CFG.account = !!(j && j.account);
   }).catch(function () {
     CFG.oauth = false;
+    CFG.account = false;
   }).then(function () {
     CFG.loaded = true;
     applyOAuth();
+    applyAcctUI();
+    if (acctLoggedIn()) loadCloud();
   });
 }
 /* 把开关结论落到界面上。确定是关的时候，把残留的登录态和进度一起抹掉，
@@ -2896,7 +3082,7 @@ function renderUser(u) {
     if (av) imgFallback(av);
   } else {
     btn.classList.remove("user");
-    btn.textContent = "登录";
+    btn.textContent = "OAuth";
   }
 }
 function openLogin() {
@@ -3135,6 +3321,430 @@ $("plForm").addEventListener("keydown", function (e) {
   })(0);
   btn.textContent = "导入中…";
 });
+/* =========================================================
+   账号密码登录 + 云端收藏（D1，跟随账号）
+   ------------------------------------------------------------
+   账号 token 存 localStorage；云端歌单/收藏从 Worker 拉取，跟随账号，
+   换设备登录同账号也能看到。未登录点爱心会弹登录框。
+   ========================================================= */
+var ACCT_KEY = "mus_acct";
+function acctLoad() { try { return JSON.parse(localStorage.getItem(ACCT_KEY) || "null"); } catch (e) { return null; } }
+function acctSave(a) {
+  try {
+    if (a) localStorage.setItem(ACCT_KEY, JSON.stringify(a));
+    else localStorage.removeItem(ACCT_KEY);
+  } catch (e) {}
+}
+var ACCT = acctLoad() || null;
+var CLOUD = { loaded: false, loading: false, _p: null, playlists: [] };
+var SHEET_SONG = null, DETAIL_PL = null;
+var acctMode = "login";
+
+function acctToken() { return ACCT && ACCT.token ? ACCT.token : ""; }
+function acctLoggedIn() { return !!(ACCT && ACCT.token && ACCT.username); }
+function acctApi(path, method, body) {
+  var opt = { method: method || "GET", headers: {} };
+  if (acctToken()) opt.headers["Authorization"] = "Bearer " + acctToken();
+  if (body) { opt.headers["Content-Type"] = "application/json"; opt.body = JSON.stringify(body); }
+  return fetch(path, opt).then(function (r) {
+    return r.json().catch(function () { return {}; }).then(function (j) {
+      if (!r.ok) {
+        var e = new Error(j && j.error ? j.error : ("请求失败 " + r.status));
+        e.status = r.status; e.data = j; throw e;
+      }
+      return j;
+    });
+  });
+}
+
+/* ---- 账号弹窗 ---- */
+function applyAcctUI() {
+  var btn = $("btnAccount");
+  if (!btn) return;
+  btn.hidden = !CFG.account;
+  var u = (CFG.account && acctLoggedIn()) ? ACCT : null;
+  if (u && u.username) {
+    btn.classList.add("user");
+    var ch = String(u.username).charAt(0).toUpperCase();
+    btn.innerHTML = '<span class="av">' + escText(ch) + '</span><span class="nm">' + escText(u.username) + '</span>';
+  } else {
+    btn.classList.remove("user");
+    btn.textContent = "登录";
+  }
+}
+function setAcctMode(mode) {
+  acctMode = mode === "reg" ? "reg" : "login";
+  $("segLogin").classList.toggle("on", acctMode === "login");
+  $("segReg").classList.toggle("on", acctMode === "reg");
+  $("acctTitle").textContent = acctMode === "reg" ? "注册账号" : "账号登录";
+  $("btnAcctSubmit").textContent = acctMode === "reg" ? "注册并登录" : "登录";
+  $("acctPass").setAttribute("autocomplete", acctMode === "reg" ? "new-password" : "current-password");
+  $("acctErr").textContent = "";
+}
+function openAcct(mode) {
+  if (!CFG.account) {
+    window.alert("账号 / 收藏功能需要在部署后的 Cloudflare Worker 上使用（需绑定 D1 数据库）。");
+    return;
+  }
+  var logged = acctLoggedIn();
+  $("acctForm").hidden = logged;
+  $("acctProfile").hidden = !logged;
+  if (logged) {
+    $("acctTitle").textContent = "我的账号";
+    $("acctName").textContent = ACCT.username;
+    $("acctAv").textContent = String(ACCT.username).charAt(0).toUpperCase();
+  } else {
+    setAcctMode(mode || "login");
+    $("acctUser").value = "";
+    $("acctPass").value = "";
+    $("acctErr").textContent = "";
+  }
+  $("acctLayer").classList.add("on");
+  if (!logged) setTimeout(function () { $("acctUser").focus(); }, 60);
+}
+function closeAcct() { $("acctLayer").classList.remove("on"); }
+function acctSetErr(msg) { $("acctErr").textContent = msg || ""; }
+function acctSubmit() {
+  var u = $("acctUser").value.trim();
+  var p = $("acctPass").value;
+  var btn = $("btnAcctSubmit");
+  if (u.length < 2 || u.length > 20) return acctSetErr("用户名需 2-20 位（字母/数字/下划线/中文）");
+  if (p.length < 6 || p.length > 32) return acctSetErr("密码需 6-32 位");
+  btn.disabled = true;
+  var isReg = acctMode === "reg";
+  acctApi(isReg ? "/auth/register" : "/auth/login", "POST", { username: u, password: p }).then(function (j) {
+    ACCT = { token: j.token, username: j.username };
+    acctSave(ACCT);
+    CLOUD.loaded = false; CLOUD.playlists = [];
+    closeAcct();
+    applyAcctUI();
+    $("acctUser").value = ""; $("acctPass").value = "";
+    renderMine();
+    $("mineCard").hidden = false;
+    switchTab("paneFav");
+    loadCloud().then(function () {
+      statusModal("ok", isReg ? "注册成功" : "登录成功", "欢迎，" + ACCT.username);
+    }).catch(function () {
+      statusModal("ok", isReg ? "注册成功" : "登录成功", "欢迎，" + ACCT.username);
+    });
+  }).catch(function (e) {
+    acctSetErr(e.message || "操作失败，请重试");
+  }).then(function () { btn.disabled = false; });
+}
+function acctLogoutLocal() {
+  ACCT = null;
+  acctSave(null);
+  CLOUD.loaded = false; CLOUD.loading = false; CLOUD.playlists = []; CLOUD._p = null;
+  SHEET_SONG = null; DETAIL_PL = null;
+  applyAcctUI();
+  favRender();
+  renderMine();
+  refreshSongHearts();
+}
+function doAcctLogout() {
+  acctApi("/auth/logout", "POST", {}).catch(function () {}).then(function () {
+    acctLogoutLocal();
+    closeAcct();
+    switchTab("panePls");
+    statusModal("tip", "已退出登录", "");
+  });
+}
+
+/* ---- 云端歌单 / 收藏数据 ---- */
+function favDefault() {
+  for (var i = 0; i < CLOUD.playlists.length; i++) if (CLOUD.playlists[i].isDefault) return CLOUD.playlists[i];
+  return CLOUD.playlists[0] || null;
+}
+function favFindPl(id) {
+  for (var i = 0; i < CLOUD.playlists.length; i++) {
+    if (String(CLOUD.playlists[i].id) === String(id)) return CLOUD.playlists[i];
+  }
+  return null;
+}
+function favHasSong(server, id) {
+  if (!acctLoggedIn()) return false;
+  var k = server + ":" + id;
+  for (var i = 0; i < CLOUD.playlists.length; i++) {
+    var songs = CLOUD.playlists[i].songs || [];
+    for (var j = 0; j < songs.length; j++) if (songs[j].server + ":" + songs[j].id === k) return true;
+  }
+  return false;
+}
+function favInPlaylist(pl, song) {
+  var k = song.server + ":" + song.id;
+  var songs = pl.songs || [];
+  for (var i = 0; i < songs.length; i++) if (songs[i].server + ":" + songs[i].id === k) return true;
+  return false;
+}
+function loadCloud() {
+  if (!acctLoggedIn()) return Promise.resolve(null);
+  if (CLOUD.loading && CLOUD._p) return CLOUD._p;
+  CLOUD.loading = true;
+  var p = acctApi("/my/playlists").then(function (j) {
+    CLOUD.loading = false; CLOUD.loaded = true;
+    CLOUD.playlists = (j.playlists || []).map(function (pl) {
+      return {
+        id: pl.id, name: pl.name, isDefault: !!pl.isDefault,
+        songs: (pl.songs || []).map(function (s) {
+          return { id: String(s.id), server: s.server, title: s.title || "", author: s.author || "", pic: s.pic || "", at: s.at };
+        })
+      };
+    });
+    favRender(); renderMine(); refreshSongHearts();
+    return j;
+  }).catch(function (e) {
+    CLOUD.loading = false;
+    if (e && e.status === 401) acctLogoutLocal();
+    else favRender();
+    throw e;
+  });
+  CLOUD._p = p;
+  p.then(function () { CLOUD._p = null; }, function () { CLOUD._p = null; });
+  return p;
+}
+
+/* ---- 我的收藏 标签页 ---- */
+function favRender() {
+  var tab = $("tabFav"), pane = $("paneFav");
+  var logged = acctLoggedIn();
+  if (tab) tab.hidden = !logged;
+  if (!logged) {
+    if (pane) pane.hidden = true;
+    var lb0 = $("favLogin"); if (lb0) lb0.hidden = false;
+    var lw0 = $("favLists"); if (lw0) lw0.innerHTML = "";
+    var nb0 = $("btnNewPl"); if (nb0) nb0.style.display = "none";
+    var fe0 = $("favEmpty"); if (fe0) fe0.hidden = true;
+    return;
+  }
+  var loginBox = $("favLogin"); if (loginBox) loginBox.hidden = true;
+  var newBtn = $("btnNewPl"); if (newBtn) newBtn.style.display = "";
+  var wrap = $("favLists");
+  if (!wrap) return;
+  wrap.innerHTML = "";
+  var empty = $("favEmpty");
+  if (CLOUD.loading && !CLOUD.playlists.length) {
+    empty.hidden = false; empty.textContent = "歌单加载中…";
+    return;
+  }
+  if (!CLOUD.playlists.length) {
+    empty.hidden = false; empty.textContent = "还没有歌单。点上方「新建歌单」，或在搜索结果里点 ♥ 收藏歌曲";
+    return;
+  }
+  empty.hidden = true;
+  CLOUD.playlists.forEach(function (pl) {
+    var card = document.createElement("div");
+    card.className = "favcard";
+    var cover = (pl.songs[0] && pl.songs[0].pic) || "";
+    card.innerHTML =
+      '<span class="fc-cov"><img src="' + escAttr(cover || DEFAULT_ART) + '" loading="lazy" alt="">' +
+      (pl.songs.length ? '<span class="pl-n">' + pl.songs.length + ' 首</span>' : '') + '</span>' +
+      '<span class="fc-t">' + escText(pl.name) + (pl.isDefault ? '<i class="fc-badge">默认</i>' : '') + '</span>' +
+      '<span class="fc-s">' + (pl.songs[0] ? "最近收藏 · " + escText(pl.songs[0].title) : "点 ♥ 收藏歌曲") + '</span>';
+    if (!pl.isDefault) {
+      var x = document.createElement("button");
+      x.type = "button"; x.className = "fc-x"; x.title = "删除歌单"; x.setAttribute("aria-label", "删除歌单");
+      x.onclick = function (e) { e.stopPropagation(); deleteCloudPlaylist(pl.id); };
+      card.appendChild(x);
+    }
+    card.onclick = function () { favOpenDetail(pl.id); };
+    imgFallback(card.querySelector("img"));
+    wrap.appendChild(card);
+  });
+}
+function refreshSongHearts() {
+  var ul = $("searchList");
+  if (ul && !$("listCard").hidden && S.list.length) renderSonglist(ul, S.list);
+}
+function createCloudPlaylist() {
+  if (!acctLoggedIn()) return openAcct("login");
+  var name = window.prompt("新建歌单名称：", "");
+  if (name == null) return;
+  name = name.trim();
+  if (!name) return;
+  acctApi("/my/playlists", "POST", { name: name }).then(function (j) {
+    statusModal("ok", "已创建歌单", j.name);
+    return loadCloud().catch(function () {});
+  }).catch(function (e) { window.alert(e.message || "创建失败"); });
+}
+function deleteCloudPlaylist(pid) {
+  var pl = favFindPl(pid);
+  if (!pl) return;
+  if (!window.confirm("确定删除歌单「" + pl.name + "」吗？歌单内的收藏会一并移除。")) return;
+  acctApi("/my/playlists/delete", "POST", { id: pid }).then(function () {
+    return loadCloud().catch(function () {});
+  }).then(function () {
+    if (DETAIL_PL && String(DETAIL_PL.id) === String(pid)) closeFavDetail();
+    statusModal("ok", "已删除歌单", pl.name);
+  }).catch(function (e) { window.alert(e.message || "删除失败"); });
+}
+
+/* ---- 收藏到歌单 弹层 ---- */
+function favOpenSheet(song) {
+  if (!acctLoggedIn()) { openAcct("login"); return; }
+  SHEET_SONG = {
+    id: String(song.id), server: song.server || S.server,
+    title: song.title || "", author: song.author || "", pic: song.pic || ""
+  };
+  $("favSheetHint").textContent = SHEET_SONG.title + (SHEET_SONG.author ? " · " + SHEET_SONG.author : "");
+  favRenderSheet();
+  if (!CLOUD.loaded) { loadCloud().catch(function () {}).then(function () { favRenderSheet(); }); }
+  $("favSheet").classList.add("on");
+}
+function favRenderSheet() {
+  var body = $("favSheetBody");
+  if (!body) return;
+  body.innerHTML = "";
+  if (!SHEET_SONG) return;
+  if (CLOUD.loading && !CLOUD.playlists.length) {
+    var ld = document.createElement("div");
+    ld.className = "fav-empty"; ld.textContent = "歌单加载中…";
+    body.appendChild(ld);
+    return;
+  }
+  CLOUD.playlists.forEach(function (pl) {
+    var row = document.createElement("div");
+    row.className = "sheet-row" + (favInPlaylist(pl, SHEET_SONG) ? " added" : "");
+    row.innerHTML =
+      '<span class="sr-ic">♪</span>' +
+      '<span class="sr-nm">' + escText(pl.name) + '<small>' + (pl.songs ? pl.songs.length : 0) + ' 首' + (pl.isDefault ? " · 默认" : "") + '</small></span>' +
+      '<span class="sr-ck">✓</span>';
+    row.onclick = function () { favToggleSong(pl); };
+    body.appendChild(row);
+  });
+  var nu = document.createElement("div");
+  nu.className = "sheet-row sr-new";
+  nu.textContent = "＋ 新建歌单";
+  nu.onclick = function () {
+    var name = window.prompt("新建歌单名称：", "");
+    if (name == null) return;
+    name = name.trim();
+    if (!name) return;
+    acctApi("/my/playlists", "POST", { name: name }).then(function (j) {
+      return loadCloud().then(function () { return j; });
+    }).then(function (j) {
+      /* 新建后自动把当前歌收藏进新歌单 */
+      var np = favFindPl(j.id);
+      if (np) favToggleSong(np, null, true);
+      favRenderSheet();
+    }).catch(function (e) { window.alert(e.message || "创建失败"); });
+  };
+  body.appendChild(nu);
+}
+function favToggleSong(pl, row, forceAdd) {
+  if (!SHEET_SONG) return;
+  var wantAdd = forceAdd ? true : !favInPlaylist(pl, SHEET_SONG);
+  var payload = {
+    playlistId: pl.id, server: SHEET_SONG.server, id: SHEET_SONG.id,
+    title: SHEET_SONG.title, artist: SHEET_SONG.author, pic: SHEET_SONG.pic
+  };
+  acctApi(wantAdd ? "/my/songs/add" : "/my/songs/remove", "POST", payload).then(function () {
+    if (!pl.songs) pl.songs = [];
+    if (wantAdd) {
+      if (!favInPlaylist(pl, SHEET_SONG)) pl.songs.unshift({
+        id: SHEET_SONG.id, server: SHEET_SONG.server, title: SHEET_SONG.title,
+        author: SHEET_SONG.author, pic: SHEET_SONG.pic, at: Date.now()
+      });
+    } else {
+      for (var i = pl.songs.length - 1; i >= 0; i--) {
+        if (pl.songs[i].server + ":" + pl.songs[i].id === SHEET_SONG.server + ":" + SHEET_SONG.id) pl.songs.splice(i, 1);
+      }
+    }
+    favRenderSheet(); favRender(); refreshSongHearts();
+    if (DETAIL_PL && String(DETAIL_PL.id) === String(pl.id)) favOpenDetail(pl.id);
+  }).catch(function (e) { window.alert(e.message || "操作失败"); });
+}
+
+/* ---- 歌单详情 ---- */
+function favPlaylistAsList(pl) {
+  return (pl.songs || []).map(function (s) {
+    return { id: String(s.id), au: "", server: s.server, title: s.title, author: s.author || "", pic: s.pic || "" };
+  });
+}
+function favOpenDetail(pid) {
+  var pl = favFindPl(pid);
+  if (!pl) return;
+  DETAIL_PL = pl;
+  $("favDetailTitle").textContent = pl.name;
+  $("btnFavDel").style.visibility = pl.isDefault ? "hidden" : "visible";
+  var box = $("favSongs");
+  box.innerHTML = "";
+  var list = favPlaylistAsList(pl);
+  if (!list.length) {
+    var empty = document.createElement("div");
+    empty.className = "fav-empty"; empty.textContent = "歌单还没有歌曲，去搜索结果里点 ♥ 收藏吧";
+    box.appendChild(empty);
+  }
+  list.forEach(function (s, idx) {
+    var row = document.createElement("div");
+    row.className = "fav-song";
+    row.innerHTML =
+      '<span class="fs-im"><img src="' + escAttr(s.pic || DEFAULT_ART) + '" loading="lazy" alt=""></span>' +
+      '<span class="fs-meta"><span class="fs-t">' + escText(s.title) + '</span><span class="fs-s">' + escText(s.author) + '</span></span>';
+    var x = document.createElement("button");
+    x.type = "button"; x.className = "fs-x"; x.title = "从歌单移除"; x.setAttribute("aria-label", "从歌单移除");
+    x.onclick = function (ev) {
+      ev.stopPropagation();
+      acctApi("/my/songs/remove", "POST", { playlistId: pl.id, server: s.server, id: s.id }).then(function () {
+        return loadCloud().catch(function () {});
+      }).then(function () {
+        var np = favFindPl(pl.id);
+        if (np) favOpenDetail(np.id);
+      }).catch(function (err) { window.alert(err.message || "移除失败"); });
+    };
+    row.appendChild(x);
+    row.onclick = function () { closeFavDetail(); setQueue(list, idx); };
+    imgFallback(row.querySelector("img"));
+    box.appendChild(row);
+  });
+  $("favDetail").classList.add("on");
+}
+function closeFavDetail() { $("favDetail").classList.remove("on"); DETAIL_PL = null; }
+function favPlayAll() {
+  if (!DETAIL_PL) return;
+  var list = favPlaylistAsList(DETAIL_PL);
+  if (!list.length) { statusModal("tip", "歌单是空的", ""); return; }
+  closeFavDetail();
+  setQueue(list, 0);
+}
+
+/* ---- 账号 / 收藏事件 ---- */
+$("btnAccount").onclick = function () { openAcct(); };
+$("btnFavLogin").onclick = function () { openAcct("login"); };
+$("btnNewPl").onclick = function () { createCloudPlaylist(); };
+$("segLogin").onclick = function () { setAcctMode("login"); };
+$("segReg").onclick = function () { setAcctMode("reg"); };
+$("btnAcctSubmit").onclick = function () { acctSubmit(); };
+$("btnAcctLogout").onclick = function () { doAcctLogout(); };
+$("btnAcctClose").onclick = closeAcct;
+$("btnFavSheetClose").onclick = function () { $("favSheet").classList.remove("on"); SHEET_SONG = null; };
+$("btnFavDetailClose").onclick = closeFavDetail;
+$("btnFavPlayAll").onclick = favPlayAll;
+$("btnFavDel").onclick = function () { if (DETAIL_PL) deleteCloudPlaylist(DETAIL_PL.id); };
+$("acctLayer").addEventListener("click", function (e) { if (e.target === this) closeAcct(); });
+$("favSheet").addEventListener("click", function (e) { if (e.target === this) { this.classList.remove("on"); SHEET_SONG = null; } });
+$("favDetail").addEventListener("click", function (e) { if (e.target === this) closeFavDetail(); });
+$("acctUser").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); $("acctPass").focus(); } });
+$("acctPass").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); acctSubmit(); } });
+document.addEventListener("keydown", function (e) {
+  if (e.key !== "Escape") return;
+  if ($("favDetail").classList.contains("on")) closeFavDetail();
+  else if ($("favSheet").classList.contains("on")) { $("favSheet").classList.remove("on"); SHEET_SONG = null; }
+  else if ($("acctLayer").classList.contains("on")) closeAcct();
+});
+
+/* 启动时：先按本地 token 渲染，再向 /auth/me 校验（loadConfig 完成后也会拉一次） */
+applyAcctUI();
+if (acctLoggedIn()) {
+  acctApi("/auth/me").then(function (j) {
+    ACCT.username = j.username; acctSave(ACCT);
+    applyAcctUI();
+    loadCloud();
+  }).catch(function (e) {
+    if (e && e.status === 401) acctLogoutLocal();
+    else if (acctLoggedIn()) loadCloud();
+  });
+}
+
 renderMine();
 $("loginLayer").addEventListener("click", function (e) { if (e.target === this) closeLogin(); });
 
@@ -3281,7 +3891,7 @@ var UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, l
 var CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
   "Access-Control-Max-Age": "86400"
 };
 /* =========================================================
@@ -3300,8 +3910,10 @@ function flagOn(v) {
   return v === "true" || v === "1" || v === "yes" || v === "on";
 }
 function oauthOn(env) { return flagOn(env ? env.OAUTH_ON : ""); }
+/* 账号 / 收藏功能是否可用：取决于是否绑定了 D1 数据库（binding 名 DB）。 */
+function accountOn(env) { return !!(env && env.DB); }
 async function handleConfig(env) {
-  return json({ oauth: oauthOn(env) }, 200, { "cache-control": "no-store" });
+  return json({ oauth: oauthOn(env), account: accountOn(env) }, 200, { "cache-control": "no-store" });
 }
 var json = ((obj, status = 200, extra = null) => new Response(JSON.stringify(obj), {
   status,
@@ -3826,6 +4438,230 @@ async function handleHealth(env) {
   });
 }
 
+/* =========================================================
+   账号 / 收藏：Cloudflare D1（binding 名 DB）
+   ------------------------------------------------------------
+   账号密码注册 / 登录（PBKDF2-SHA256 加盐哈希），会话 token；
+   云端歌单（注册即建默认「我的收藏」）与歌曲收藏全部跟随账号存进 D1，
+   换设备、换浏览器登录同一个账号，歌单一模一样。
+   未绑定 D1 时这些接口统一回 503，不影响搜索 / 播放。
+   ========================================================= */
+var SESSION_TTL = 30 * 24 * 3600 * 1000;
+var dbReady = null;
+function dbOf(env) { return env && env.DB ? env.DB : null; }
+function dbMissing() {
+  return json({ error: "账号/收藏未启用：请先在 Cloudflare 给本 Worker 绑定 D1 数据库（binding 名 DB）" }, 503);
+}
+async function ensureSchema(env) {
+  const db = dbOf(env);
+  if (!db) return false;
+  if (dbReady) return dbReady;
+  dbReady = (async () => {
+    const stmts = [
+      "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL, pass_salt TEXT NOT NULL, pass_hash TEXT NOT NULL, created_at INTEGER NOT NULL)",
+      "CREATE TABLE IF NOT EXISTS sessions (token TEXT PRIMARY KEY, user_id INTEGER NOT NULL, created_at INTEGER NOT NULL, expires_at INTEGER NOT NULL)",
+      "CREATE TABLE IF NOT EXISTS playlists (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, name TEXT NOT NULL, is_default INTEGER NOT NULL DEFAULT 0, created_at INTEGER NOT NULL)",
+      "CREATE TABLE IF NOT EXISTS playlist_songs (id INTEGER PRIMARY KEY AUTOINCREMENT, playlist_id INTEGER NOT NULL, server TEXT NOT NULL, song_id TEXT NOT NULL, title TEXT, artist TEXT, pic TEXT, added_at INTEGER NOT NULL, UNIQUE(playlist_id, server, song_id))",
+      "CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id)",
+      "CREATE INDEX IF NOT EXISTS idx_playlists_user ON playlists(user_id)",
+      "CREATE INDEX IF NOT EXISTS idx_songs_pl ON playlist_songs(playlist_id)",
+      "CREATE INDEX IF NOT EXISTS idx_songs_song ON playlist_songs(server, song_id)"
+    ];
+    for (let i = 0; i < stmts.length; i++) await db.exec(stmts[i]);
+  })().catch((e) => { dbReady = null; throw e; });
+  return dbReady.then(() => true);
+}
+function bufToHex(buf) {
+  return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+function hexToBytes(hex) {
+  const out = new Uint8Array(Math.floor(hex.length / 2));
+  for (let i = 0; i < out.length; i++) out[i] = parseInt(hex.substr(i * 2, 2), 16);
+  return out;
+}
+function randHex(n) {
+  const b = new Uint8Array(n);
+  crypto.getRandomValues(b);
+  return bufToHex(b);
+}
+async function hashPassword(password, saltHex) {
+  const enc = new TextEncoder();
+  const material = await crypto.subtle.importKey("raw", enc.encode(password), { name: "PBKDF2", hash: "SHA-256" }, false, ["deriveBits"]);
+  const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", salt: hexToBytes(saltHex), iterations: 100000, hash: "SHA-256" }, material, 256);
+  return bufToHex(bits);
+}
+function validUsername(u) {
+  u = String(u == null ? "" : u).trim();
+  return (u.length >= 2 && u.length <= 20 && /^[\u4e00-\u9fa5A-Za-z0-9_]+$/.test(u)) ? u : "";
+}
+function validPassword(p) {
+  p = String(p == null ? "" : p);
+  return (p.length >= 6 && p.length <= 32) ? p : "";
+}
+async function readJson(request) {
+  try {
+    const j = await request.json();
+    return j && typeof j === "object" ? j : {};
+  } catch (e) { return {}; }
+}
+async function createSession(db, userId) {
+  const token = randHex(32);
+  const now = Date.now();
+  await db.prepare("INSERT INTO sessions (token, user_id, created_at, expires_at) VALUES (?, ?, ?, ?)").bind(token, userId, now, now + SESSION_TTL).run();
+  return token;
+}
+async function authUser(env, request) {
+  const db = dbOf(env);
+  if (!db) return null;
+  const h = request.headers.get("authorization") || "";
+  const m = h.match(/^Bearer\s+([0-9a-f]{16,})$/i);
+  if (!m) return null;
+  const token = m[1];
+  const row = await db.prepare("SELECT s.expires_at, u.id AS uid, u.username FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token = ?").bind(token).first();
+  if (!row) return null;
+  if (!row.expires_at || row.expires_at < Date.now()) {
+    try { await db.prepare("DELETE FROM sessions WHERE token = ?").bind(token).run(); } catch (e) {}
+    return null;
+  }
+  return { token: token, uid: row.uid, username: row.username };
+}
+async function handleRegister(env, request) {
+  const db = dbOf(env);
+  if (!db) return dbMissing();
+  await ensureSchema(env);
+  const body = await readJson(request);
+  const username = validUsername(body.username);
+  const password = validPassword(body.password);
+  if (!username) return json({ error: "用户名需 2-20 位（字母/数字/下划线/中文）" }, 400);
+  if (!password) return json({ error: "密码需 6-32 位" }, 400);
+  const dup = await db.prepare("SELECT id FROM users WHERE username = ?").bind(username).first();
+  if (dup) return json({ error: "该用户名已被注册" }, 409);
+  const salt = randHex(16);
+  const hash = await hashPassword(password, salt);
+  const now = Date.now();
+  const info = await db.prepare("INSERT INTO users (username, pass_salt, pass_hash, created_at) VALUES (?, ?, ?, ?)").bind(username, salt, hash, now).run();
+  const uid = info && info.meta ? info.meta.last_row_id : null;
+  await db.prepare("INSERT INTO playlists (user_id, name, is_default, created_at) VALUES (?, ?, 1, ?)").bind(uid, "我的收藏", now).run();
+  const token = await createSession(db, uid);
+  return json({ token: token, username: username });
+}
+async function handleLogin(env, request) {
+  const db = dbOf(env);
+  if (!db) return dbMissing();
+  await ensureSchema(env);
+  const body = await readJson(request);
+  const username = String(body.username == null ? "" : body.username).trim();
+  const password = String(body.password == null ? "" : body.password);
+  if (!username || !password) return json({ error: "请输入用户名和密码" }, 400);
+  const user = await db.prepare("SELECT id, username, pass_salt, pass_hash FROM users WHERE username = ?").bind(username).first();
+  if (!user) return json({ error: "用户名或密码错误" }, 401);
+  const hash = await hashPassword(password, user.pass_salt);
+  if (hash !== user.pass_hash) return json({ error: "用户名或密码错误" }, 401);
+  const token = await createSession(db, user.id);
+  return json({ token: token, username: user.username });
+}
+async function handleLogout(env, request) {
+  const db = dbOf(env);
+  const a = await authUser(env, request);
+  if (a && db) { try { await db.prepare("DELETE FROM sessions WHERE token = ?").bind(a.token).run(); } catch (e) {} }
+  return json({ ok: true });
+}
+async function handleMe(env, request) {
+  const db = dbOf(env);
+  if (!db) return dbMissing();
+  await ensureSchema(env);
+  const a = await authUser(env, request);
+  if (!a) return json({ error: "未登录" }, 401);
+  return json({ username: a.username });
+}
+async function ownedPlaylist(db, uid, pid) {
+  pid = parseInt(pid, 10);
+  if (!pid) return null;
+  return await db.prepare("SELECT id, name, is_default FROM playlists WHERE id = ? AND user_id = ?").bind(pid, uid).first();
+}
+async function handlePlaylistsGet(env, request) {
+  const db = dbOf(env);
+  if (!db) return dbMissing();
+  await ensureSchema(env);
+  const a = await authUser(env, request);
+  if (!a) return json({ error: "未登录" }, 401);
+  const pls = await db.prepare("SELECT id, name, is_default, created_at FROM playlists WHERE user_id = ? ORDER BY is_default DESC, id ASC").bind(a.uid).all();
+  const songs = await db.prepare("SELECT playlist_id, server, song_id, title, artist, pic, added_at FROM playlist_songs WHERE playlist_id IN (SELECT id FROM playlists WHERE user_id = ?) ORDER BY added_at DESC").bind(a.uid).all();
+  const byPl = {};
+  (songs.results || []).forEach((s) => {
+    const k = String(s.playlist_id);
+    if (!byPl[k]) byPl[k] = [];
+    byPl[k].push({ server: s.server, id: s.song_id, title: s.title || "", author: s.artist || "", pic: s.pic || "", at: s.added_at });
+  });
+  const out = (pls.results || []).map((p) => ({
+    id: p.id,
+    name: p.name,
+    isDefault: !!p.is_default,
+    count: (byPl[String(p.id)] || []).length,
+    songs: byPl[String(p.id)] || []
+  }));
+  return json({ username: a.username, playlists: out });
+}
+async function handlePlaylistCreate(env, request) {
+  const db = dbOf(env);
+  if (!db) return dbMissing();
+  await ensureSchema(env);
+  const a = await authUser(env, request);
+  if (!a) return json({ error: "未登录" }, 401);
+  const body = await readJson(request);
+  let name = String(body.name == null ? "" : body.name).trim().slice(0, 30);
+  if (!name) name = "新歌单 " + Date.now();
+  const dup = await db.prepare("SELECT id FROM playlists WHERE user_id = ? AND name = ?").bind(a.uid, name).first();
+  if (dup) return json({ error: "已有同名歌单" }, 409);
+  const info = await db.prepare("INSERT INTO playlists (user_id, name, is_default, created_at) VALUES (?, ?, 0, ?)").bind(a.uid, name, Date.now()).run();
+  return json({ id: info && info.meta ? info.meta.last_row_id : null, name: name });
+}
+async function handlePlaylistDelete(env, request) {
+  const db = dbOf(env);
+  if (!db) return dbMissing();
+  await ensureSchema(env);
+  const a = await authUser(env, request);
+  if (!a) return json({ error: "未登录" }, 401);
+  const body = await readJson(request);
+  const p = await ownedPlaylist(db, a.uid, body.id);
+  if (!p) return json({ error: "歌单不存在" }, 404);
+  if (p.is_default) return json({ error: "默认收藏歌单不可删除" }, 400);
+  await db.prepare("DELETE FROM playlist_songs WHERE playlist_id = ?").bind(p.id).run();
+  await db.prepare("DELETE FROM playlists WHERE id = ? AND user_id = ?").bind(p.id, a.uid).run();
+  return json({ ok: true });
+}
+async function handleSongAdd(env, request) {
+  const db = dbOf(env);
+  if (!db) return dbMissing();
+  await ensureSchema(env);
+  const a = await authUser(env, request);
+  if (!a) return json({ error: "未登录" }, 401);
+  const body = await readJson(request);
+  const p = await ownedPlaylist(db, a.uid, body.playlistId);
+  if (!p) return json({ error: "歌单不存在" }, 404);
+  const server = String(body.server || "netease").slice(0, 20);
+  const sid = String(body.id == null ? "" : body.id).trim();
+  if (!sid) return json({ error: "缺少歌曲 id" }, 400);
+  await db.prepare("INSERT OR IGNORE INTO playlist_songs (playlist_id, server, song_id, title, artist, pic, added_at) VALUES (?, ?, ?, ?, ?, ?, ?)").bind(p.id, server, sid, String(body.title || "").slice(0, 200), String(body.artist || "").slice(0, 200), String(body.pic || "").slice(0, 500), Date.now()).run();
+  const cnt = await db.prepare("SELECT COUNT(*) AS n FROM playlist_songs WHERE playlist_id = ?").bind(p.id).first();
+  return json({ ok: true, playlistId: p.id, count: cnt ? cnt.n : 0 });
+}
+async function handleSongRemove(env, request) {
+  const db = dbOf(env);
+  if (!db) return dbMissing();
+  await ensureSchema(env);
+  const a = await authUser(env, request);
+  if (!a) return json({ error: "未登录" }, 401);
+  const body = await readJson(request);
+  const p = await ownedPlaylist(db, a.uid, body.playlistId);
+  if (!p) return json({ error: "歌单不存在" }, 404);
+  const server = String(body.server || "netease").slice(0, 20);
+  const sid = String(body.id == null ? "" : body.id).trim();
+  await db.prepare("DELETE FROM playlist_songs WHERE playlist_id = ? AND server = ? AND song_id = ?").bind(p.id, server, sid).run();
+  const cnt = await db.prepare("SELECT COUNT(*) AS n FROM playlist_songs WHERE playlist_id = ?").bind(p.id).first();
+  return json({ ok: true, playlistId: p.id, count: cnt ? cnt.n : 0 });
+}
+
 var worker_default = {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -3833,6 +4669,15 @@ var worker_default = {
       return new Response(null, { status: 204, headers: CORS });
     }
     const p = url.pathname;
+    /* 账号 / 收藏接口（必须排在 /api 通配之前） */
+    if (p === "/auth/register" && request.method === "POST") return handleRegister(env, request);
+    if (p === "/auth/login" && request.method === "POST") return handleLogin(env, request);
+    if (p === "/auth/logout" && request.method === "POST") return handleLogout(env, request);
+    if (p === "/auth/me" && request.method === "GET") return handleMe(env, request);
+    if (p === "/my/playlists") return request.method === "GET" ? handlePlaylistsGet(env, request) : handlePlaylistCreate(env, request);
+    if (p === "/my/playlists/delete" && request.method === "POST") return handlePlaylistDelete(env, request);
+    if (p === "/my/songs/add" && request.method === "POST") return handleSongAdd(env, request);
+    if (p === "/my/songs/remove" && request.method === "POST") return handleSongRemove(env, request);
     if (p === "/" || p === "/index.html") {
       // 回退：不再 gzip 压缩 HTML。
       // 曾用 CompressionStream 压缩并以 content-encoding:gzip 返回，但未检查
