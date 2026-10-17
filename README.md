@@ -40,31 +40,31 @@ npx wrangler deploy
 
 改样式或前端逻辑一律改 `index.html`，改完跑一次 `node build.js` 重新生成 `worker.js`。
 
-### 开通账号 / 收藏 / 云歌单（绑定 D1，可选但推荐）
+### 账号 / 收藏 / 云歌单（绑定 D1）
 
-搜索和播放不需要数据库；**想要注册登录、收藏、歌单跟随账号**，就要绑定一个免费的 Cloudflare D1。
+搜索和播放不需要数据库；**注册登录、收藏、歌单跟随账号**依赖一个免费的 Cloudflare D1。
+当前仓库已配置好一个名为 `music-db` 的 D1 绑定（绑定名 `DB`），表结构在首次访问时自动创建；**仓库所有者直接部署即可使用，无需额外操作**。
 
-**Wrangler 方式：**
+> 如果你是 **Fork 后部署到自己的 Cloudflare 账号**：别人的 `database_id` 不在你的账号里，部署会失败。请改成你自己的库，或暂时把 `wrangler.toml` 里的 `[[d1_databases]]` 四行注释掉（注释后账号/收藏功能自动隐藏，搜索/播放不受影响）。
+
+**Wrangler 方式（Fork 时）：**
 
 ```bash
 # 1. 创建 D1 数据库（免费额度足够个人使用）
 npx wrangler d1 create music-db
 #    命令会输出一个 database_id（一长串 UUID）。
-# 2. 打开 wrangler.toml，找到文末被注释掉的 [[d1_databases]] 四行，去掉注释，
-#    把 database_id 改成上一步的真实 id。
-# 3. 初始化表结构（可跳过：Worker 第一次收到请求时会自动 CREATE TABLE IF NOT EXISTS）
+# 2. 打开 wrangler.toml，把 [[d1_databases]] 下的 database_id 改成你自己的 id。
+# 3. （可选）初始化表结构；不执行也没关系，Worker 首次访问会自动建表
 npx wrangler d1 execute music-db --remote --file=./schema.sql
-# 4. 重新部署
+# 4. 部署
 npx wrangler deploy
 ```
 
-> 为保证「没建 D1 也能直接部署」，`wrangler.toml` 里的 `[[d1_databases]]` 绑定**默认是注释掉的**；不启用也能正常部署，只是账号/收藏功能自动隐藏。**不想改文件就用上面的 Dashboard 方式直接绑定（绑定名 `DB`）。**
-
-**Dashboard 方式（含 Git 导入）：**
+**Dashboard 方式（不修改文件）：**
 
 1. **Workers & Pages → D1 SQL Database → Create**，数据库名可填 `music-db`。
 2. 进入你的 Worker → **Settings → Bindings → Add → D1 Database**，绑定名（Variable name）必须填 **`DB`**，选刚建的库。
-3. 保存后重新部署即可；表结构会在首次访问时自动创建。
+3. 保存后自动重新部署；表结构会在首次访问时自动创建。
 
 绑定成功后，刷新页面顶栏会出现「登录」，点进去可注册账号；注册成功自动拥有默认歌单「我的收藏」，搜索结果点 ♥ 即可收藏，也可在「我的音乐 → 我的收藏」里新建歌单、播放整单。**不绑定 D1 时这些接口统一回 503，前端自动隐藏入口，其余功能不受影响。**
 
